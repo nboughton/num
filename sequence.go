@@ -1,6 +1,7 @@
 package num
 
 import (
+	"fmt"
 	"math"
 	"math/big"
 )
@@ -69,82 +70,14 @@ func Seq(t T) chan Int {
 				a, b = b, a
 				c <- a
 			}
+
+		default:
+			fmt.Println("Not implemented for num.Seq()")
 		}
 	}()
 
 	return c
 }
-
-/*
-// PrimesBetween returns a channel with all primes between start and finish
-func PrimesBetween(start, finish Int) chan Int {
-	c := make(chan Int, 1)
-
-	go func() {
-		defer close(c)
-
-		for _, i := range PrimeSieve(finish) {
-			if i > start {
-				c <- i
-			}
-		}
-	}()
-
-	return c
-}
-
-// PrimesFrom returns a channel of primes from start
-func PrimesFrom(start Int) chan Int {
-	c := make(chan Int, 1)
-
-	go func() {
-		defer close(c)
-
-		if start == 2 {
-			c <- start
-		}
-
-		if start.Is(EVEN) {
-			start++
-		}
-
-		for i := start; i < Int(math.MaxInt64); i += 2 {
-			if i.Is(PRIME) {
-				c <- i
-			}
-		}
-	}()
-
-	return c
-}
-
-// NPrimesFrom returns n conescutive primes starting from x
-func NPrimesFrom(start, n Int) chan Int {
-	c := make(chan Int, 1)
-
-	go func() {
-		defer close(c)
-
-		if start == 2 {
-			c <- start
-		}
-
-		if start%2 == 0 {
-			start++
-		}
-
-		count := Int(0)
-		for i := start; count < n; i += 2 {
-			if i.Is(PRIME) {
-				c <- i
-				count++
-			}
-		}
-	}()
-
-	return c
-}
-*/
 
 // PellLucas streams n iterations of the Pell/Pell-Lucas sequence. These can
 // Seqbe used as approximations for the continued fraction of the square root of 2
