@@ -5,62 +5,59 @@ import (
 	"math/big"
 )
 
-// IsPrime returns true if n is prime
-func (n Int) IsPrime() bool {
-	return big.NewInt(int64(n)).ProbablyPrime(5)
-}
+// T represents IDs of numerical types
+type T int
 
-// IsTriangular returns true if n is a triangular number
-func (n Int) IsTriangular() bool {
-	i, f := math.Modf((math.Sqrt(float64(8*n+1)) - 1) / 2)
-	if f == 0 && i >= 1 {
-		return true
-	}
-	return false
-}
+// Numerical "types" (triangle/square/pentagon etc)
+const (
+	EVEN T = iota
+	ODD
+	PRIME
+	TRIANGLE
+	SQUARE
+	PENTAGONAL
+	HEXAGONAL
+	HEPTAGONAL
+	OCTAGONAL
+)
 
-// IsSquare returns true if n is a square number
-func (n Int) IsSquare() bool {
-	i, f := math.Modf(math.Sqrt(float64(n)))
-	if f == 0 && i >= 1 {
-		return true
-	}
-	return false
-}
+// Is tests n for numerical attribute t
+func (n Int) Is(t T) bool {
+	switch t {
+	case EVEN:
+		return n%2 == 0
 
-// IsPentagonal returns true if n is a pentagonal number
-func (n Int) IsPentagonal() bool {
-	i, f := math.Modf((math.Sqrt(float64(24*n+1)) + 1) / 6)
-	if f == 0 && i >= 0 {
-		return true
-	}
-	return false
-}
+	case ODD:
+		return n%2 != 0
 
-// IsHexagonal returns true if n is a hexagonal number
-func (n Int) IsHexagonal() bool {
-	i, f := math.Modf((math.Sqrt(float64(8*n+1)) + 1) / 4)
-	if f == 0 && i >= 1 {
-		return true
-	}
-	return false
-}
+	case PRIME:
+		return big.NewInt(int64(n)).ProbablyPrime(5)
 
-// IsHeptagonal returns true if n is a heptagonal number
-func (n Int) IsHeptagonal() bool {
-	i, f := math.Modf((math.Sqrt(float64(40*n+9)) + 3) / 10)
-	if f == 0 && i >= 1 {
-		return true
-	}
-	return false
-}
+	case TRIANGLE:
+		i, f := math.Modf((math.Sqrt(float64(8*n+1)) - 1) / 2)
+		return f == 0 && i >= 1
 
-// IsOctagonal returns true if n is an octagonal number
-func (n Int) IsOctagonal() bool {
-	i, f := math.Modf((math.Sqrt(float64(3*n+1)) + 1) / 3)
-	if f == 0 && i >= 1 {
-		return true
+	case SQUARE:
+		i, f := math.Modf(math.Sqrt(float64(n)))
+		return f == 0 && i >= 1
+
+	case PENTAGONAL:
+		i, f := math.Modf((math.Sqrt(float64(24*n+1)) + 1) / 6)
+		return f == 0 && i >= 0
+
+	case HEXAGONAL:
+		i, f := math.Modf((math.Sqrt(float64(8*n+1)) + 1) / 4)
+		return f == 0 && i >= 1
+
+	case HEPTAGONAL:
+		i, f := math.Modf((math.Sqrt(float64(40*n+9)) + 3) / 10)
+		return f == 0 && i >= 1
+
+	case OCTAGONAL:
+		i, f := math.Modf((math.Sqrt(float64(3*n+1)) + 1) / 3)
+		return f == 0 && i >= 1
 	}
+
 	return false
 }
 
@@ -80,7 +77,7 @@ func IsUniqueCharString(s string) bool {
 	for _, v := range s {
 		m[v]++
 		if m[v] > 1 {
-			return false
+
 		}
 	}
 

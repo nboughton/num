@@ -2,7 +2,6 @@ package num
 
 import (
 	"math"
-	"math/big"
 	"strconv"
 	"strings"
 )
@@ -76,7 +75,7 @@ func (n Int) PrimeFactors() Set {
 	pf := Set{}
 
 	for _, v := range n.Divisors() {
-		if v.IsPrime() {
+		if v.Is(PRIME) {
 			pf = append(pf, v)
 		}
 	}
@@ -97,70 +96,39 @@ func (n Int) Totient() Int {
 	return ans
 }
 
-// BIG INTS
-// Some calculcations are going to produce numbers that overflow Int(int64)
+// Rotations returns a sequence of rotations of n.
+// I.e Rotations(123) = 123 -> 312 -> 231
+func (n Int) Rotations() chan Int {
+	c := make(chan Int, 1)
 
-// BigToSet returns a Set from the digits of a big.Int
-func BigToSet(n *big.Int) Set {
-	var res Set
+	go func() {
+		defer close(c)
 
-	for _, v := range n.String() {
-		i, _ := strconv.ParseInt(string(v), 10, 64)
-		res = append(res, Int(i))
-	}
+		s := n.ToSet()
+		for i := 0; i < len(s); i++ {
+			rt := append(Set{s[len(s)-1]}, s[:len(s)-1]...)
+			c <- rt.ToInt()
+			s = rt
+		}
+	}()
 
-	return res
+	return c
 }
 
-// Factorial returns n! using big.Int as values increase exponentially
-func (n Int) Factorial() *big.Int {
-	if n == 0 {
-		return big.NewInt(1)
-	}
+// Truncate returns a channel of Int slices that contain the
+// truncation sequence of n from the left and the right simultaneously.
+// I.e Truncate(123) = [123, 123] -> [23, 12] -> [3, 1]
+func (n Int) Truncate() chan Set {
+	c := make(chan Set, 1)
 
-	s := []string{}
-	for i := n; i > 0; i-- {
-		s = append(s, strconv.FormatInt(int64(i), 10))
-	}
+	go func() {
+		defer close(c)
 
-	return BigProduct(s)
-}
+		s := n.ToSet()
+		for i := range s {
+			c <- Set{s[i:].ToInt(), s[:len(s)-i].ToInt()}
+		}
+	}()
 
-// BigSum takes an array of strings representing big ints and returns
-// a big Int value of the sum
-func BigSum(n []string) *big.Int {
-	a := big.NewInt(0)
-	a.SetString(n[0], 10)
-
-	for i := 1; i < len(n); i++ {
-		b := big.NewInt(0)
-		b.SetString(n[i], 10)
-
-		a.Add(a, b)
-	}
-	return a
-}
-
-// BigProduct takes an array of strings representing numbers and
-// and returns a big Int containing their Product
-func BigProduct(n []string) *big.Int {
-	a := big.NewInt(0)
-	a.SetString(n[0], 10)
-
-	for i := 1; i < len(n); i++ {
-		b := big.NewInt(0)
-		b.SetString(n[i], 10)
-
-		a.Mul(a, b)
-	}
-	return a
-}
-
-// BigPow returns x^y as a big Int
-func BigPow(x, y Int) *big.Int {
-	n, m := big.NewInt(int64(x)), big.NewInt(int64(x))
-	for i := Int(2); i <= y; i++ {
-		n.Mul(n, m)
-	}
-	return n
+	return c
 }
