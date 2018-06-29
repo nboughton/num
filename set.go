@@ -3,7 +3,6 @@ package num
 import (
 	"math"
 	"math/big"
-	//"math/big"
 	"sort"
 	"strconv"
 )
@@ -28,15 +27,13 @@ func Range(start, end Int) Set {
 
 // PrimeSieve returns a set of primes below n
 func PrimeSieve(n Int) Set {
-	var (
-		sieve = make([]bool, n)
-		res   Set
-	)
+	var res Set
 
 	if n < 2 {
 		return res
 	}
 
+	sieve := make([]bool, n)
 	for i := Int(2); i <= Int(math.Sqrt(float64(n))); i++ {
 		if !sieve[i] {
 			for j := i * i; j < n; j += i {
