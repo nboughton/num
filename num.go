@@ -83,6 +83,20 @@ func (n Int) PrimeFactors() Set {
 	return pf
 }
 
+// Factorial returns n!
+func (n Int) Factorial() Int {
+	if n == 0 {
+		return Int(1)
+	}
+
+	var res Set
+	for i := n; i > 0; i-- {
+		res = append(res, i)
+	}
+
+	return res.Product()
+}
+
 // Totient returns the result of Eulers Totient or Phi function of value n
 func (n Int) Totient() Int {
 	pF := n.PrimeFactors()

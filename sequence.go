@@ -61,12 +61,21 @@ func Seq(t T) chan Int {
 			for i := Int(1); i < Int(math.MaxInt64); i++ {
 				c <- i * (3*i - 2)
 			}
+
+		case FIBONACCI:
+			a, b := Int(0), Int(1)
+			for {
+				a = a + b
+				a, b = b, a
+				c <- a
+			}
 		}
 	}()
 
 	return c
 }
 
+/*
 // PrimesBetween returns a channel with all primes between start and finish
 func PrimesBetween(start, finish Int) chan Int {
 	c := make(chan Int, 1)
@@ -95,7 +104,7 @@ func PrimesFrom(start Int) chan Int {
 			c <- start
 		}
 
-		if start%2 == 0 {
+		if start.Is(EVEN) {
 			start++
 		}
 
@@ -135,6 +144,7 @@ func NPrimesFrom(start, n Int) chan Int {
 
 	return c
 }
+*/
 
 // PellLucas streams n iterations of the Pell/Pell-Lucas sequence. These can
 // Seqbe used as approximations for the continued fraction of the square root of 2
@@ -159,9 +169,8 @@ func PellLucas(n Int) chan [2]*big.Int {
 	return r
 }
 
-// Fibonacci returns a channel of the Fibonacci sequence using big Ints.
-// SeqBig ints are used because of the exponential growth of Fibonacci numbers.
-func Fibonacci() chan *big.Int {
+// BigFib returns a channel of the Fibonacci sequence using big Ints.
+func BigFib() chan *big.Int {
 	c := make(chan *big.Int, 1)
 
 	go func() {

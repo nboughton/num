@@ -1,6 +1,7 @@
 package num
 
 import (
+	"fmt"
 	"math"
 	"math/big"
 )
@@ -19,6 +20,7 @@ const (
 	HEXAGONAL
 	HEPTAGONAL
 	OCTAGONAL
+	FIBONACCI
 )
 
 // Is tests n for numerical attribute t
@@ -56,6 +58,9 @@ func (n Int) Is(t T) bool {
 	case OCTAGONAL:
 		i, f := math.Modf((math.Sqrt(float64(3*n+1)) + 1) / 3)
 		return f == 0 && i >= 1
+
+	case FIBONACCI:
+		fmt.Println("Fibonacci not implemented for num.Is()")
 	}
 
 	return false

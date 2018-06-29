@@ -20,7 +20,7 @@ func BigToSet(n *big.Int) Set {
 	return res
 }
 
-// BigFactorial returns n! using big.Int as values increase exponentially
+// BigFactorial returns n! using big.Int
 func (n Int) BigFactorial() *big.Int {
 	if n == 0 {
 		return big.NewInt(1)

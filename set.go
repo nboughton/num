@@ -33,6 +33,10 @@ func PrimeSieve(n Int) Set {
 		res   Set
 	)
 
+	if n < 2 {
+		return res
+	}
+
 	for i := Int(2); i <= Int(math.Sqrt(float64(n))); i++ {
 		if !sieve[i] {
 			for j := i * i; j < n; j += i {
@@ -47,7 +51,7 @@ func PrimeSieve(n Int) Set {
 		}
 	}
 
-	return res
+	return res[2:]
 }
 
 // Contains returns whether or not n exists in set s
