@@ -5,8 +5,8 @@ import (
 	"math/big"
 )
 
-// Sequence returns a channel of numbers for type t
-func Sequence(t T) chan Int {
+// Seq returns a channel of numbers for type t
+func Seq(t T) chan Int {
 	c := make(chan Int, 1)
 
 	go func() {
