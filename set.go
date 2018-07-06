@@ -62,6 +62,29 @@ func (s Set) Contains(n Int) bool {
 	return false
 }
 
+// GCD returns the Greatest Common Divisor of all items in Set s
+func (s Set) GCD() Int {
+	if len(s) < 2 {
+		return Int(0)
+	}
+
+	var gcd func(x, y Int) Int
+	gcd = func(x, y Int) Int {
+		for y != 0 {
+			x, y = y, x%y
+		}
+		return x
+	}
+
+	res := gcd(s[0], s[1])
+
+	for i := 2; i < len(s); i++ {
+		res = gcd(res, s[i])
+	}
+
+	return res
+}
+
 // Sum returns the sum total of the set
 func (s Set) Sum() Int {
 	var t Int
