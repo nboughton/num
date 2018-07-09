@@ -12,8 +12,8 @@ type Frac struct {
 }
 
 // NewFrac returns a new Frac
-func NewFrac(n, d num.Int) Frac {
-	return Frac{
+func NewFrac(n, d num.Int) *Frac {
+	return &Frac{
 		Num: n,
 		Den: d,
 		Val: float64(n) / float64(d),
@@ -21,11 +21,10 @@ func NewFrac(n, d num.Int) Frac {
 }
 
 // GCD returns the Greatest Common Denominator (aka Highest Common Factor) of the numerator and denominator of Frac f
-func (f Frac) GCD() num.Int {
-	s := num.Set{f.Num, f.Den}
-	return s.GCD()
+func (f *Frac) GCD() num.Int {
+	return num.Set{f.Num, f.Den}.GCD()
 }
 
-func (f Frac) String() string {
+func (f *Frac) String() string {
 	return fmt.Sprintf("%v/%v", f.Num, f.Den)
 }
