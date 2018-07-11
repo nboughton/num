@@ -140,14 +140,12 @@ func (s Set) Dedupe() Set {
 
 	for _, n := range s {
 		m[n]++
-	}
-
-	for k := range m {
-		res = append(res, k)
+		if m[n] == 1 {
+			res = append(res, n)
+		}
 	}
 
 	sort.Sort(res)
-
 	return res
 }
 
