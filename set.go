@@ -16,10 +16,10 @@ func (s Set) Less(i, j int) bool { return s[i] < s[j] }
 
 // Range returns a set of start .. end inclusive
 func Range(start, end Int) Set {
-	var res Set
+	res := make(Set, end-start+1)
 
-	for i := start; i <= end; i++ {
-		res = append(res, i)
+	for i, n := Int(0), start; i < end-start+1; i, n = i+1, n+1 {
+		res[i] = n
 	}
 
 	return res
