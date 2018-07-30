@@ -9,26 +9,11 @@ import (
 // Int is the default value used in Sets and Matrices in this package
 type Int int64
 
-var abc = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-var atoi = make(map[byte]Int)
-
 func init() {
 	// populate atoi map for Abc func
 	for i, v := range abc {
 		atoi[v] = Int(i + 1)
 	}
-}
-
-// AbcToInt returns the a = 1, b = 2 etc score for string s
-func AbcToInt(s string) Int {
-	s = strings.ToUpper(s)
-
-	score := Int(0)
-	for _, v := range []byte(s) {
-		score += atoi[v]
-	}
-
-	return score
 }
 
 // String returns n as a base 10 string and satisfies the stringer interface
@@ -145,4 +130,61 @@ func (n Int) Truncate() chan Set {
 	}()
 
 	return c
+}
+
+// Partition returns the number of partitions of n with m parts. See https://en.wikipedia.org/wiki/Partition_(8number_theory)
+func Partition(n, m Int) Int {
+	if m < 2 {
+		return m
+	}
+
+	if n < m {
+		return 0
+	}
+
+	var memo Matrix
+	for i := Int(0); i <= n-m; i++ {
+		memo = append(memo, make(Set, m))
+	}
+
+	var p func(n, m Int) Int
+	p = func(n, m Int) Int {
+		if n <= m+1 {
+			return 1
+		}
+
+		if memo[n-m][m-2] != 0 {
+			return memo[n-m][m-2]
+		}
+
+		max := n / m
+		if m == 2 {
+			return max
+		}
+
+		count := Int(0)
+		for ; max > 0; max, n = max-1, n-m {
+			memo[n-m][m-3] = p(n-1, m-1)
+			count += memo[n-m][m-3]
+		}
+
+		return count
+	}
+
+	return p(n, m)
+}
+
+var abc = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var atoi = make(map[byte]Int)
+
+// AbcToInt returns the a = 1, b = 2 etc score for string s
+func AbcToInt(s string) Int {
+	s = strings.ToUpper(s)
+
+	score := Int(0)
+	for _, v := range []byte(s) {
+		score += atoi[v]
+	}
+
+	return score
 }
