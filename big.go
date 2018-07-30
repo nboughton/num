@@ -72,3 +72,45 @@ func BigPow(x, y Int) *big.Int {
 	}
 	return n
 }
+
+// BigPartition returns the number of parts of n of size m using *big.Int
+func BigPartition(n, m Int) *big.Int {
+	if m < 2 {
+		return big.NewInt(int64(m))
+	}
+
+	if n < m {
+		return big.NewInt(int64(0))
+	}
+
+	var memo Matrix
+	for i := Int(0); i <= n-m; i++ {
+		memo = append(memo, make(Set, m))
+	}
+
+	var p func(n, m Int) *big.Int
+	p = func(n, m Int) *big.Int {
+		if n <= m+1 {
+			return big.NewInt(1)
+		}
+
+		if memo[n-m][m-2] != 0 {
+			return big.NewInt(int64(memo[n-m][m-2]))
+		}
+
+		max := n / m
+		if m == 2 {
+			return big.NewInt(int64(max))
+		}
+
+		count := big.NewInt(0)
+		for ; max > 0; max, n = max-1, n-m {
+			memo[n-m][m-3] = Int(p(n-1, m-1).Int64())
+			count.Add(count, big.NewInt(int64(memo[n-m][m-3])))
+		}
+
+		return count
+	}
+
+	return p(n, m)
+}
