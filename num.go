@@ -132,7 +132,7 @@ func (n Int) Truncate() chan Set {
 	return c
 }
 
-// Partition returns the number of partitions of n with m parts. See https://en.wikipedia.org/wiki/Partition_(8number_theory)
+// Partition returns the number of partitions of n with m parts. See https://en.wikipedia.org/wiki/Partition_(number_theory)
 func Partition(n, m Int) Int {
 	if m < 2 {
 		return m
