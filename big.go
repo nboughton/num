@@ -83,9 +83,13 @@ func BigPartition(n, m Int) *big.Int {
 		return big.NewInt(int64(0))
 	}
 
-	var memo Matrix
+	var memo [][]*big.Int
 	for i := Int(0); i <= n-m; i++ {
-		memo = append(memo, make(Set, m))
+		set := make([]*big.Int, m)
+		for j := range set {
+			set[j] = big.NewInt(0)
+		}
+		memo = append(memo, set)
 	}
 
 	var p func(n, m Int) *big.Int
@@ -94,8 +98,8 @@ func BigPartition(n, m Int) *big.Int {
 			return big.NewInt(1)
 		}
 
-		if memo[n-m][m-2] != 0 {
-			return big.NewInt(int64(memo[n-m][m-2]))
+		if memo[n-m][m-2].Cmp(big.NewInt(0)) != 0 {
+			return memo[n-m][m-2]
 		}
 
 		max := n / m
@@ -105,8 +109,8 @@ func BigPartition(n, m Int) *big.Int {
 
 		count := big.NewInt(0)
 		for ; max > 0; max, n = max-1, n-m {
-			memo[n-m][m-3] = Int(p(n-1, m-1).Int64())
-			count.Add(count, big.NewInt(int64(memo[n-m][m-3])))
+			memo[n-m][m-3] = p(n-1, m-1)
+			count.Add(count, memo[n-m][m-3])
 		}
 
 		return count
