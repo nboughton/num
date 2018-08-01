@@ -73,7 +73,7 @@ func decimalPlaces(f float64) int {
 
 // Continued "should" emit the continued fraction represenations of f and probably doesn't work due to the limitations of
 // floating point number accuracy See: https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems
-// This code works for the example given in the above wikipedia page.
+// This code works for the example given in the above wikipedia page under Calculating continued fraction representations.
 func (f *Frac) Continued() chan *big.Rat {
 	c := make(chan *big.Rat)
 
@@ -85,6 +85,7 @@ func (f *Frac) Continued() chan *big.Rat {
 			f, _ := r.Float64()
 			i, _ := math.Modf(f)
 
+			// n becomes the simplified fractional part
 			n := new(big.Rat).Sub(r, big.NewRat(int64(i), 1))
 			if n.Num().Cmp(big.NewInt(0)) == 0 {
 				return
