@@ -3,6 +3,7 @@ package num
 import (
 	"fmt"
 	"math"
+	"math/big"
 	"strconv"
 	"strings"
 )
@@ -56,6 +57,7 @@ func (f *Frac) Inverse() *Frac {
 func FloatToFrac(f float64) (*Frac, error) {
 	_, fr := math.Modf(f)
 
+	fmt.Println(fr)
 	d := math.Pow10(decimalPlaces(fr))
 	n := d * fr
 
@@ -64,37 +66,36 @@ func FloatToFrac(f float64) (*Frac, error) {
 
 // decimalPlaces returns the number of decimal places in f
 func decimalPlaces(f float64) int {
-	str := strconv.FormatFloat(f, 'f', -1, 64)
+	str := strconv.FormatFloat(f, 'f', 2, 64)
 	arr := strings.Split(str, ".")
 	return len(arr[1])
 }
 
 // Continued "should" emit the continued fraction represenations of f and probably doesn't work due to the limitations of
-// floating point number accuracy. See: https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems
-func (f *Frac) Continued() chan *Frac {
-	c := make(chan *Frac)
+// floating point number accuracy See: https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems
+// This code works for the example given in the above wikipedia page.
+func (f *Frac) Continued() chan *big.Rat {
+	c := make(chan *big.Rat)
 
 	go func() {
 		defer close(c)
 
-		var cf func(f *Frac)
-		cf = func(f *Frac) {
-			fr := f.Flt - float64(f.Int)
-			if fr == 0 {
+		var cf func(r *big.Rat)
+		cf = func(r *big.Rat) {
+			f, _ := r.Float64()
+			i, _ := math.Modf(f)
+
+			n := new(big.Rat).Sub(r, big.NewRat(int64(i), 1))
+			if n.Num().Cmp(big.NewInt(0)) == 0 {
 				return
 			}
+			n.Inv(n)
 
-			s, err := FloatToFrac(fr)
-			if err != nil {
-				return
-			}
-
-			i := s.Inverse()
-			c <- i
-			cf(i)
+			c <- n
+			cf(n)
 		}
 
-		cf(f)
+		cf(big.NewRat(int64(f.Num), int64(f.Den)))
 	}()
 
 	return c
