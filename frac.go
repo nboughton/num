@@ -5,10 +5,11 @@ import (
 	"math"
 )
 
-// Frac represents a fraction by its Num(erator), Den(ominator) and decimal Dec
+// Frac represents a (possibly mixed) fraction by its Int(eger), Num(erator), Den(ominator)
+// and Flt (float64) values
 type Frac struct {
 	Num, Den, Int Int
-	Dec           float64
+	Flt           float64
 }
 
 // NewFrac returns a new Frac
@@ -17,7 +18,7 @@ func NewFrac(i, n, d Int) *Frac {
 		Int: i,
 		Num: n,
 		Den: d,
-		Dec: float64(i) + float64(n)/float64(d),
+		Flt: float64(i) + float64(n)/float64(d),
 	}
 }
 
@@ -62,7 +63,7 @@ func (f *Frac) Continued() chan *Frac {
 
 		var cf func(f *Frac)
 		cf = func(f *Frac) {
-			i, frac := math.Modf(f.Dec)
+			i, frac := math.Modf(f.Flt)
 			fmt.Println(i, frac)
 			if frac == 0 {
 				return
