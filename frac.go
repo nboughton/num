@@ -3,6 +3,8 @@ package num
 import (
 	"fmt"
 	"math"
+	"strconv"
+	"strings"
 )
 
 // Frac represents a (possibly mixed) fraction by its Int(eger), Num(erator), Den(ominator)
@@ -13,13 +15,17 @@ type Frac struct {
 }
 
 // NewFrac returns a new Frac
-func NewFrac(i, n, d Int) *Frac {
-	return &Frac{
-		Int: i,
+func NewFrac(n, d Int) *Frac {
+	f := &Frac{
 		Num: n,
 		Den: d,
-		Flt: float64(i) + float64(n)/float64(d),
+		Flt: float64(n) / float64(d),
 	}
+
+	i, _ := math.Modf(f.Flt)
+	f.Int = Int(i)
+
+	return f
 }
 
 // GCD returns the Greatest Common Denominator (aka Highest Common Factor) of the numerator and denominator of Frac f
@@ -31,8 +37,8 @@ func (f *Frac) String() string {
 	return fmt.Sprintf("%v/%v", f.Num, f.Den)
 }
 
-// Simplify simplifies f and returns it
-func (f *Frac) Simplify() *Frac {
+// Reduce simplifies f and returns it
+func (f *Frac) Reduce() *Frac {
 	gcd := f.GCD()
 
 	f.Num /= gcd
@@ -41,20 +47,30 @@ func (f *Frac) Simplify() *Frac {
 	return f
 }
 
-// FloatToFrac converts a decimal to a reduced fraction
-func FloatToFrac(f float64) (*Frac, error) {
-	var i, n Int
-	if _, err := fmt.Sscanf(fmt.Sprint(f), "%d.%d", &i, &n); err != nil {
-		return nil, err
-	}
-
-	d := Int(math.Pow10(len(n.ToSet())))
-	return NewFrac(i, n, d).Simplify(), nil
+// Inverse returns the inverse of f as a new Frac
+func (f *Frac) Inverse() *Frac {
+	return NewFrac(f.Den, f.Num)
 }
 
-// WORK IN PROGRESS
-// Continued emits the continued fraction represenations of f
-/*
+// FloatToFrac converts a decimal to a reduced fraction
+func FloatToFrac(f float64) (*Frac, error) {
+	_, fr := math.Modf(f)
+
+	d := math.Pow10(decimalPlaces(fr))
+	n := d * fr
+
+	return NewFrac(Int(n), Int(d)).Reduce(), nil
+}
+
+// decimalPlaces returns the number of decimal places in f
+func decimalPlaces(f float64) int {
+	str := strconv.FormatFloat(f, 'f', -1, 64)
+	arr := strings.Split(str, ".")
+	return len(arr[1])
+}
+
+// Continued "should" emit the continued fraction represenations of f and probably doesn't work due to the limitations of
+// floating point number accuracy. See: https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems
 func (f *Frac) Continued() chan *Frac {
 	c := make(chan *Frac)
 
@@ -63,17 +79,19 @@ func (f *Frac) Continued() chan *Frac {
 
 		var cf func(f *Frac)
 		cf = func(f *Frac) {
-			i, frac := math.Modf(f.Flt)
-			fmt.Println(i, frac)
-			if frac == 0 {
+			fr := f.Flt - float64(f.Int)
+			if fr == 0 {
 				return
 			}
 
-			r := NewFrac(Int(i), Int(frac))
-			fmt.Println(r.Simplify())
-			//r := NewFrac(f.Den, f.Num)
-			c <- r
-			cf(r)
+			s, err := FloatToFrac(fr)
+			if err != nil {
+				return
+			}
+
+			i := s.Inverse()
+			c <- i
+			cf(i)
 		}
 
 		cf(f)
@@ -81,4 +99,3 @@ func (f *Frac) Continued() chan *Frac {
 
 	return c
 }
-*/
