@@ -74,12 +74,12 @@ func (n Int) Factorial() Int {
 		return Int(1)
 	}
 
-	var res Set
-	for i := n; i > 0; i-- {
-		res = append(res, i)
+	res := n
+	for i := n - 1; i > 0; i-- {
+		res *= i
 	}
 
-	return res.Product()
+	return res
 }
 
 // Totient returns the result of Eulers Totient or Phi function of value n

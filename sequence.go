@@ -80,7 +80,7 @@ func Seq(t T) chan Int {
 }
 
 // PellLucas streams n iterations of the Pell/Pell-Lucas sequence. These can
-// Seqbe used as approximations for the continued fraction of the square root of 2
+// be used as approximations for the continued fraction of the square root of 2
 func PellLucas(n Int) chan [2]*big.Int {
 	a, b, r := big.NewInt(0), big.NewInt(1), make(chan [2]*big.Int)
 
@@ -111,7 +111,7 @@ func BigFib() chan *big.Int {
 
 		a, b := big.NewInt(0), big.NewInt(1)
 
-		for true {
+		for {
 			a.Add(a, b)
 			a, b = b, a
 			c <- big.NewInt(0).Set(a)

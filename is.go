@@ -81,10 +81,7 @@ func (n Int) Is(t T) bool {
 
 // IsPyTriplet returns true if a < b < c and a^2 + b^2 = c^2
 func IsPyTriplet(a, b, c Int) bool {
-	if a < b && b < c && a*a+b*b == c*c {
-		return true
-	}
-	return false
+	return a < b && b < c && a*a+b*b == c*c
 }
 
 // IsUniqueCharString returns true if a string contains no duplicate
@@ -95,7 +92,7 @@ func IsUniqueCharString(s string) bool {
 	for _, v := range s {
 		m[v]++
 		if m[v] > 1 {
-
+			return false
 		}
 	}
 
