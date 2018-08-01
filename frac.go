@@ -89,15 +89,15 @@ func (f *Frac) Continued() chan CF {
 			f, _ := r.Float64()
 			i, _ := math.Modf(f)
 
-			// n becomes the simplified fractional part
-			n := new(big.Rat).Sub(r, big.NewRat(int64(i), 1))
-			c <- CF{Int: int64(i), Frac: n}
+			// s becomes the simplified fractional part
+			s := new(big.Rat).Sub(r, big.NewRat(int64(i), 1))
+			c <- CF{Int: int64(i), Frac: s}
 
-			if n.Num().Cmp(big.NewInt(0)) == 0 {
+			if s.Num().Cmp(big.NewInt(0)) == 0 { // Stop at 0/1
 				return
 			}
 
-			cf(n.Inv(n))
+			cf(s.Inv(s))
 		}
 
 		cf(big.NewRat(int64(f.Num), int64(f.Den)))
