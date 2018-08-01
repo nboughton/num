@@ -7,16 +7,17 @@ import (
 
 // Frac represents a fraction by its Num(erator), Den(ominator) and decimal Dec
 type Frac struct {
-	Num, Den Int
-	Dec      float64
+	Num, Den, Int Int
+	Dec           float64
 }
 
 // NewFrac returns a new Frac
-func NewFrac(n, d Int) *Frac {
+func NewFrac(i, n, d Int) *Frac {
 	return &Frac{
+		Int: i,
 		Num: n,
 		Den: d,
-		Dec: float64(n) / float64(d),
+		Dec: float64(i) + float64(n)/float64(d),
 	}
 }
 
@@ -40,18 +41,14 @@ func (f *Frac) Simplify() *Frac {
 }
 
 // DecToFrac converts a decimal to a reduced fraction
-func DecToFrac(d float64) (*Frac, error) {
-	if d > 1 {
-		return nil, fmt.Errorf("d must be < 1")
-	}
-
-	var numerator Int
-	if _, err := fmt.Sscanf(fmt.Sprint(d), "0.%d", &numerator); err != nil {
+func DecToFrac(f float64) (*Frac, error) {
+	var i, n Int
+	if _, err := fmt.Sscanf(fmt.Sprint(f), "%d.%d", &i, &n); err != nil {
 		return nil, err
 	}
 
-	denominator := Int(math.Pow10(len(numerator.ToSet())))
-	return NewFrac(numerator, denominator).Simplify(), nil
+	d := Int(math.Pow10(len(n.ToSet())))
+	return NewFrac(i, n, d).Simplify(), nil
 }
 
 // WORK IN PROGRESS
