@@ -73,8 +73,8 @@ func decimalPlaces(f float64) int {
 
 // CF represents both the Integer part and the simplified fractional part of each step in a continued fraction
 type CF struct {
-	Int  int64
-	Frac *big.Rat
+	Int  Int
+	Frac *Frac
 }
 
 // Continued "should" emit the continued fraction represenations of f as their Integer and simplified Fractional parts
@@ -91,7 +91,11 @@ func (f *Frac) Continued() chan CF {
 
 			// s becomes the simplified fractional part
 			s := new(big.Rat).Sub(r, big.NewRat(int64(i), 1))
-			c <- CF{Int: int64(i), Frac: s}
+
+			// Create a new *Frac to return
+			num, denom := Int(s.Num().Int64()), Int(s.Denom().Int64())
+			o := NewFrac(num, denom)
+			c <- CF{Int: Int(i), Frac: o}
 
 			if s.Num().Cmp(big.NewInt(0)) == 0 { // Stop at 0/1
 				return
