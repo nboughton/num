@@ -66,7 +66,7 @@ func FloatToFrac(f float64) (*Frac, error) {
 
 // decimalPlaces returns the number of decimal places in f
 func decimalPlaces(f float64) int {
-	str := strconv.FormatFloat(f, 'f', 2, 64)
+	str := strconv.FormatFloat(f, 'f', -1, 64)
 	arr := strings.Split(str, ".")
 	return len(arr[1])
 }
