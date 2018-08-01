@@ -40,8 +40,8 @@ func (f *Frac) Simplify() *Frac {
 	return f
 }
 
-// DecToFrac converts a decimal to a reduced fraction
-func DecToFrac(f float64) (*Frac, error) {
+// FloatToFrac converts a decimal to a reduced fraction
+func FloatToFrac(f float64) (*Frac, error) {
 	var i, n Int
 	if _, err := fmt.Sscanf(fmt.Sprint(f), "%d.%d", &i, &n); err != nil {
 		return nil, err
