@@ -79,7 +79,7 @@ type CF struct {
 
 // ContinuedFraction "should" emit the continued fraction represenations of f as their Integer and simplified Fractional parts
 func ContinuedFraction(f *big.Rat) chan CF {
-	c := make(chan CF)
+	c := make(chan CF, 1)
 
 	go func() {
 		defer close(c)
@@ -96,7 +96,7 @@ func ContinuedFraction(f *big.Rat) chan CF {
 			c <- CF{Int: Int(i), Frac: s}
 
 			// Stop at 0/1
-			if s.Num().Cmp(big.NewInt(0)) == 0 {
+			if s.IsInt() {
 				return
 			}
 
