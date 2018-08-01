@@ -71,11 +71,17 @@ func decimalPlaces(f float64) int {
 	return len(arr[1])
 }
 
+// CF represents both the Integer part and the simplified fractional part of each step in a continued fraction
+type CF struct {
+	I    int64
+	Frac *big.Rat
+}
+
 // Continued "should" emit the continued fraction represenations of f and probably doesn't work due to the limitations of
 // floating point number accuracy See: https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems
 // This code works for the example given in the above wikipedia page under Calculating continued fraction representations.
-func (f *Frac) Continued() chan *big.Rat {
-	c := make(chan *big.Rat)
+func (f *Frac) Continued() chan CF {
+	c := make(chan CF)
 
 	go func() {
 		defer close(c)
@@ -87,13 +93,13 @@ func (f *Frac) Continued() chan *big.Rat {
 
 			// n becomes the simplified fractional part
 			n := new(big.Rat).Sub(r, big.NewRat(int64(i), 1))
+			c <- CF{I: int64(i), Frac: n}
+
 			if n.Num().Cmp(big.NewInt(0)) == 0 {
 				return
 			}
-			n.Inv(n)
 
-			c <- n
-			cf(n)
+			cf(n.Inv(n))
 		}
 
 		cf(big.NewRat(int64(f.Num), int64(f.Den)))
