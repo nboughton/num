@@ -57,11 +57,46 @@ func (f *Frac) Inverse() *Frac {
 func FloatToFrac(f float64) (*Frac, error) {
 	_, fr := math.Modf(f)
 
-	fmt.Println(fr)
+	//fmt.Println(fr)
 	d := math.Pow10(decimalPlaces(fr))
 	n := d * fr
 
 	return NewFrac(Int(n), Int(d)).Reduce(), nil
+}
+
+// CF emits the Continued Fraction integer terms of f using Euclid's algorithm. This only works for
+// rational numbers as irrational numbers eventually become inaccurate.
+func (f *Frac) CF() Set {
+	res := Set{}
+
+	var cf func(n, d Int)
+	cf = func(n, d Int) {
+		if d == 0 {
+			return
+		}
+
+		r := n % d
+		res = append(res, n/d)
+
+		//fmt.Printf("%d; %d/%d\n", n/d, r, d)
+		cf(d, r)
+	}
+
+	cf(f.Num, f.Den)
+
+	return res
+}
+
+// CfSqrtX attempts to calculate the convergents of Sqrt(x) such that they
+// satisfy Pell's Equation. It is currently unfinished.
+func CfSqrtX(x float64) {
+	sqrt := math.Sqrt(x)
+	if _, frac := math.Modf(sqrt); frac == 0 {
+		return
+	}
+
+	sf := sqrt / x
+	fmt.Println(sf)
 }
 
 // decimalPlaces returns the number of decimal places in f
@@ -69,45 +104,4 @@ func decimalPlaces(f float64) int {
 	str := strconv.FormatFloat(f, 'f', -1, 64)
 	arr := strings.Split(str, ".")
 	return len(arr[1])
-}
-
-// CF represents both the Integer part and the simplified fractional part of each step in a continued fraction
-type CF struct {
-	Int  Int
-	Frac *big.Rat
-}
-
-// ContinuedFraction "should" emit the continued fraction represenations of f as their Integer and simplified Fractional parts.
-// Bearing in mind the difficulties inherent in representing fractional values in base 10 floating point numbers. See:
-// https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems
-func ContinuedFraction(f *big.Rat) chan CF {
-	c := make(chan CF, 1)
-
-	go func() {
-		defer close(c)
-
-		var cf func(r *big.Rat)
-		cf = func(r *big.Rat) {
-			f, _ := r.Float64()
-			i, _ := math.Modf(f)
-
-			// s becomes the simplified fractional part
-			s := new(big.Rat).Sub(r, big.NewRat(int64(i), 1))
-
-			// Return Step values
-			c <- CF{Int: Int(i), Frac: new(big.Rat).Set(s)}
-
-			// Stop at 0/1
-			if s.IsInt() {
-				return
-			}
-
-			cf(s.Inv(s))
-		}
-
-		// Start with a new copy of f to prevent mutation
-		cf(new(big.Rat).Set(f))
-	}()
-
-	return c
 }

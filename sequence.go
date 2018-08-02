@@ -140,3 +140,44 @@ func Collatz(n Int) Set {
 
 	return seq
 }
+
+// CF represents both the Integer part and the simplified fractional part of each step in a continued fraction
+type CF struct {
+	Int  Int
+	Frac *big.Rat
+}
+
+// ContinuedFraction "should" emit the continued fraction represenations of f as their Integer and simplified Fractional parts.
+// Bearing in mind the difficulties inherent in representing fractional values in base 10 floating point numbers. See:
+// https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems This only really works for Rational numbers.
+func ContinuedFraction(f *big.Rat) chan CF {
+	c := make(chan CF, 1)
+
+	go func() {
+		defer close(c)
+
+		var cf func(r *big.Rat)
+		cf = func(r *big.Rat) {
+			f, _ := r.Float64()
+			i, _ := math.Modf(f)
+
+			// s becomes the simplified fractional part
+			s := new(big.Rat).Sub(r, big.NewRat(int64(i), 1))
+
+			// Return Step values
+			c <- CF{Int: Int(i), Frac: new(big.Rat).Set(s)}
+
+			// Stop at 0/1
+			if s.IsInt() {
+				return
+			}
+
+			cf(s.Inv(s))
+		}
+
+		// Start with a new copy of f to prevent mutation
+		cf(new(big.Rat).Set(f))
+	}()
+
+	return c
+}

@@ -62,6 +62,50 @@ func (s Set) Contains(n Int) bool {
 	return false
 }
 
+// GRS returns the Greatest Repeating Subset in a set
+func (s Set) GRS() Set {
+	var res Set
+
+	if len(s) < 10 { // a tad arbitrary
+		return s
+	}
+
+	i, j, k, h, t1, t2 := 0, 1, 2, 3, Set{}, Set{}
+	for ; i < j; i++ {
+		for j = i + 1; j < k; j++ {
+			t1 = Set(s[i : j+1])
+
+			for k = j + 1; k < h; k++ {
+				for h = k + 1; h < len(s); h++ {
+					t2 = Set(s[k : h+1])
+
+					if t1.Cmp(t2) && len(t1) > len(res) {
+						res = t1
+					}
+				}
+			}
+		}
+	}
+
+	return res.GRS()
+}
+
+// Cmp compares the contents of two Sets and returns true if they are of
+// equal length and contain the same values in the same order
+func (s Set) Cmp(t Set) bool {
+	if len(s) != len(t) {
+		return false
+	}
+
+	for i := range s {
+		if s[i] != t[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
 // GCD returns the Greatest Common Divisor of all items in Set s
 func (s Set) GCD() Int {
 	if len(s) < 2 {
