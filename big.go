@@ -21,17 +21,17 @@ func BigToSet(n *big.Int) Set {
 }
 
 // BigFactorial returns n! using big.Int
-func (n Int) BigFactorial() *big.Int {
+func BigFactorial(n Int) *big.Int {
 	if n == 0 {
 		return big.NewInt(1)
 	}
 
-	s := []string{}
-	for i := n; i > 0; i-- {
-		s = append(s, strconv.FormatInt(int64(i), 10))
+	b := big.NewInt(int64(n))
+	for i := n - 1; i > 0; i-- {
+		b.Mul(b, big.NewInt(int64(i)))
 	}
 
-	return BigProduct(s)
+	return b
 }
 
 // BigSum takes an array of strings representing big ints and returns
@@ -80,7 +80,7 @@ func BigPartition(n, m Int) *big.Int {
 	}
 
 	if n < m {
-		return big.NewInt(int64(0))
+		return big.NewInt(0)
 	}
 
 	var memo [][]*big.Int
