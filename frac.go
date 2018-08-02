@@ -77,7 +77,9 @@ type CF struct {
 	Frac *big.Rat
 }
 
-// ContinuedFraction "should" emit the continued fraction represenations of f as their Integer and simplified Fractional parts
+// ContinuedFraction "should" emit the continued fraction represenations of f as their Integer and simplified Fractional parts.
+// Bearing in mind the difficulties inherent in representing fractional values in base 10 floating point numbers. See:
+// https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems
 func ContinuedFraction(f *big.Rat) chan CF {
 	c := make(chan CF, 1)
 
@@ -93,7 +95,7 @@ func ContinuedFraction(f *big.Rat) chan CF {
 			s := new(big.Rat).Sub(r, big.NewRat(int64(i), 1))
 
 			// Return Step values
-			c <- CF{Int: Int(i), Frac: s}
+			c <- CF{Int: Int(i), Frac: new(big.Rat).Set(s)}
 
 			// Stop at 0/1
 			if s.IsInt() {
@@ -103,7 +105,8 @@ func ContinuedFraction(f *big.Rat) chan CF {
 			cf(s.Inv(s))
 		}
 
-		cf(f)
+		// Start with a new copy of f to prevent mutation
+		cf(new(big.Rat).Set(f))
 	}()
 
 	return c
