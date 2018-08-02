@@ -74,11 +74,10 @@ func (f *Frac) CF() Set {
 			return
 		}
 
-		r := n % d
 		res = append(res, n/d)
 
-		//fmt.Printf("%d; %d/%d\n", n/d, r, d)
-		cf(d, r)
+		//fmt.Printf("%d; %d/%d\n", n/d, n%d, d)
+		cf(d, n%d)
 	}
 
 	cf(f.Num, f.Den)
