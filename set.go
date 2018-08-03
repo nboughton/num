@@ -308,9 +308,9 @@ func (s Set) Permutations(ln int) chan Set {
 }
 
 // Convergents treats s as the [n0; n1, n2, n3...] representation of a continued fraction
-// and returns a stream of its convergents. The Channel stops when either h or k exceeds
-// math.MaxInt64
-func (s Set) Convergents() chan Set {
+// and returns a stream of its convergents. If the sequence is recurring then the Channel
+// stops when either h or k exceeds math.MaxInt64
+func (s Set) Convergents(recurring bool) chan Set {
 	c := make(chan Set, 1)
 
 	go func() {
@@ -338,7 +338,7 @@ func (s Set) Convergents() chan Set {
 
 			// Grow a as necessary by appending the recurring portion of the
 			// continued fraction.
-			if n == len(a)-1 && len(a) < math.MaxInt32-len(s) {
+			if recurring && n == len(a)-1 && len(a) < math.MaxInt32-len(s) {
 				a = append(a, s[1:]...)
 			}
 		}

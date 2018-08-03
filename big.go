@@ -122,7 +122,7 @@ func BigPartition(n, m Int) *big.Int {
 
 // BigConvergents treats s as the [n0; n1, n2, n3...] representation of a continued fraction
 // and returns a stream of its convergents.
-func BigConvergents(s Set) chan [2]*big.Int {
+func BigConvergents(s Set, recurring bool) chan [2]*big.Int {
 	c := make(chan [2]*big.Int, 1)
 
 	go func() {
@@ -160,7 +160,7 @@ func BigConvergents(s Set) chan [2]*big.Int {
 
 			// Grow a as necessary by appending the recurring portion of the
 			// continued fraction.
-			if n == len(a)-1 && len(a) < math.MaxInt32-len(s) {
+			if recurring && n == len(a)-1 && len(a) < math.MaxInt32-len(s) {
 				for _, i := range s[1:] {
 					a = append(a, big.NewInt(int64(i)))
 				}

@@ -84,18 +84,16 @@ func (n Int) Factorial() Int {
 
 // Totient returns the result of Eulers Totient or Phi function of value n
 func (n Int) Totient() Int {
-	pF := n.PrimeFactors()
-
 	ans := n
 
-	for _, prime := range pF {
+	for _, prime := range n.PrimeFactors() {
 		ans = ans * (prime - 1) / prime
 	}
 
 	return ans
 }
 
-// CfSqrt returns the recurring pattern of the infinite continued fraction of n.
+// CfSqrt returns the recurring pattern of the infinite continued fraction of Sqrt(n).
 // Returns nil if n is square
 func (n Int) CfSqrt() Set {
 	var res Set
