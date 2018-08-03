@@ -1,6 +1,7 @@
 package num
 
 import (
+	"math"
 	"math/big"
 	"strconv"
 )
@@ -117,4 +118,55 @@ func BigPartition(n, m Int) *big.Int {
 	}
 
 	return p(n, m)
+}
+
+// BigConvergents treats s as the [n0; n1, n2, n3...] representation of a continued fraction
+// and returns a stream of its convergents.
+func BigConvergents(s Set) chan [2]*big.Int {
+	c := make(chan [2]*big.Int, 1)
+
+	go func() {
+		defer close(c)
+
+		if s == nil || len(s) < 2 {
+			return
+		}
+
+		a := []*big.Int{big.NewInt(0), big.NewInt(0)}
+		h := []*big.Int{big.NewInt(0), big.NewInt(1)}
+		k := []*big.Int{big.NewInt(1), big.NewInt(0)}
+
+		for _, n := range s {
+			a = append(a, big.NewInt(int64(n)))
+		}
+
+		for n := 2; n < len(a); n++ {
+			//hn := a[n]*h[n-1] + h[n-2]
+			//kn := a[n]*k[n-1] + k[n-2]
+
+			hn := new(big.Int).Add(
+				new(big.Int).Mul(a[n], h[n-1]),
+				h[n-2],
+			)
+
+			kn := new(big.Int).Add(
+				new(big.Int).Mul(a[n], k[n-1]),
+				k[n-2],
+			)
+
+			h, k = append(h, hn), append(k, kn)
+
+			c <- [2]*big.Int{new(big.Int).Set(hn), new(big.Int).Set(kn)}
+
+			// Grow a as necessary by appending the recurring portion of the
+			// continued fraction.
+			if n == len(a)-1 && len(a) < math.MaxInt32-len(a) {
+				for _, i := range s[1:] {
+					a = append(a, big.NewInt(int64(i)))
+				}
+			}
+		}
+	}()
+
+	return c
 }

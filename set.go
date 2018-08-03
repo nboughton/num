@@ -62,6 +62,7 @@ func (s Set) Contains(n Int) bool {
 	return false
 }
 
+/*
 // GRS returns the Greatest Repeating Subset in a set
 func (s Set) GRS() Set {
 	var res Set
@@ -87,8 +88,9 @@ func (s Set) GRS() Set {
 		}
 	}
 
-	return res.GRS()
+	return res
 }
+*/
 
 // Cmp compares the contents of two Sets and returns true if they are of
 // equal length and contain the same values in the same order
@@ -298,6 +300,46 @@ func (s Set) Permutations(ln int) chan Set {
 			}
 			if i < 0 {
 				break
+			}
+		}
+	}()
+
+	return c
+}
+
+// Convergents treats s as the [n0; n1, n2, n3...] representation of a continued fraction
+// and returns a stream of its convergents. The Channel stops when either h or k exceeds
+// math.MaxInt64
+func (s Set) Convergents() chan Set {
+	c := make(chan Set, 1)
+
+	go func() {
+		defer close(c)
+
+		if s == nil || len(s) < 2 {
+			return
+		}
+
+		a, h, k := Set{0, 0}, Set{0, 1}, Set{1, 0}
+		a = append(a, s...)
+
+		for n := 2; n < len(a); n++ {
+			hn := a[n]*h[n-1] + h[n-2]
+			kn := a[n]*k[n-1] + k[n-2]
+
+			h, k = append(h, hn), append(k, kn)
+
+			// If hn or kn overflow math.MaxInt64 they will become negative.
+			if hn < 0 || kn < 0 {
+				return
+			}
+
+			c <- Set{hn, kn}
+
+			// Grow a as necessary by appending the recurring portion of the
+			// continued fraction.
+			if n == len(a)-1 && len(a) < math.MaxInt32-len(a) {
+				a = append(a, s[1:]...)
 			}
 		}
 	}()

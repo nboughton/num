@@ -53,18 +53,17 @@ func (f *Frac) Inverse() *Frac {
 }
 
 // FloatToFrac converts a decimal to a reduced fraction
-func FloatToFrac(f float64) (*Frac, error) {
+func FloatToFrac(f float64) *Frac {
 	_, fr := math.Modf(f)
 
 	//fmt.Println(fr)
 	d := math.Pow10(decimalPlaces(fr))
 	n := d * fr
 
-	return NewFrac(Int(n), Int(d)).Reduce(), nil
+	return NewFrac(Int(n), Int(d)).Reduce()
 }
 
-// CF emits the Continued Fraction integer terms of f using Euclid's algorithm. This only works for
-// rational numbers as irrational numbers eventually become inaccurate.
+// CF emits the Continued Fraction integer terms of f using Euclid's algorithm.
 func (f *Frac) CF() Set {
 	res := Set{}
 
@@ -82,19 +81,7 @@ func (f *Frac) CF() Set {
 
 	cf(f.Num, f.Den)
 
-	return res
-}
-
-// CfSqrtX attempts to calculate the convergents of Sqrt(x) such that they
-// satisfy Pell's Equation. It is currently unfinished.
-func CfSqrtX(x float64) {
-	sqrt := math.Sqrt(x)
-	if _, frac := math.Modf(sqrt); frac == 0 {
-		return
-	}
-
-	sf := sqrt / x
-	fmt.Println(sf)
+	return res[1:]
 }
 
 // decimalPlaces returns the number of decimal places in f

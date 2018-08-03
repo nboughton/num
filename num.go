@@ -95,6 +95,30 @@ func (n Int) Totient() Int {
 	return ans
 }
 
+// CfSqrt returns the recurring pattern of the infinite continued fraction of n.
+// Returns nil if n is square
+func (n Int) CfSqrt() Set {
+	var res Set
+	if _, frac := math.Modf(math.Sqrt(float64(n))); frac == 0 {
+		return nil
+	}
+
+	m := Int(math.Floor(math.Sqrt(float64(n))))
+	res = append(res, m)
+
+	for x, y := Int(1), m; ; {
+		x = (n - y*y) / x
+		res = append(res, (m+y)/x)
+		y = m - (m+y)%x
+
+		if x <= 1 {
+			break
+		}
+	}
+
+	return res
+}
+
 // Rotations returns a sequence of rotations of n.
 // I.e Rotations(123) = 123 -> 312 -> 231
 func (n Int) Rotations() chan Int {
