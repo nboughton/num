@@ -338,7 +338,7 @@ func (s Set) Convergents() chan Set {
 
 			// Grow a as necessary by appending the recurring portion of the
 			// continued fraction.
-			if n == len(a)-1 && len(a) < math.MaxInt32-len(a) {
+			if n == len(a)-1 && len(a) < math.MaxInt32-len(s) {
 				a = append(a, s[1:]...)
 			}
 		}

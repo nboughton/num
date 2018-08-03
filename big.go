@@ -160,7 +160,7 @@ func BigConvergents(s Set) chan [2]*big.Int {
 
 			// Grow a as necessary by appending the recurring portion of the
 			// continued fraction.
-			if n == len(a)-1 && len(a) < math.MaxInt32-len(a) {
+			if n == len(a)-1 && len(a) < math.MaxInt32-len(s) {
 				for _, i := range s[1:] {
 					a = append(a, big.NewInt(int64(i)))
 				}
