@@ -79,6 +79,24 @@ func Seq(t T) chan Int {
 	return c
 }
 
+// Farey returns the nth Farey sequence
+func Farey(n Int) chan *Frac {
+	ch := make(chan *Frac)
+
+	go func() {
+		defer close(ch)
+
+		a, b, c, d := Int(0), Int(1), Int(1), n
+		for c <= n {
+			k := (n + b) / d
+			a, b, c, d = c, d, (k*c - a), (k*d - b)
+			ch <- NewFrac(a, b)
+		}
+	}()
+
+	return ch
+}
+
 // PellLucas streams n iterations of the Pell/Pell-Lucas sequence. These can
 // be used as approximations for the continued fraction of the square root of 2
 func PellLucas(n Int) chan [2]*big.Int {
