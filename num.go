@@ -154,24 +154,6 @@ func (n Int) Truncate() chan Set {
 	return c
 }
 
-// Farey returns the nth Farey sequence
-func (n Int) Farey() chan *Frac {
-	ch := make(chan *Frac)
-
-	go func() {
-		defer close(ch)
-
-		a, b, c, d := Int(0), Int(1), Int(1), n
-		for c <= n {
-			k := (n + b) / d
-			a, b, c, d = c, d, (k*c - a), (k*d - b)
-			ch <- NewFrac(a, b)
-		}
-	}()
-
-	return ch
-}
-
 // Partition returns the number of partitions of n with m parts. See https://en.wikipedia.org/wiki/Partition_(number_theory)
 func Partition(n, m Int) Int {
 	if m < 2 {
