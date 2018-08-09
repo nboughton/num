@@ -14,6 +14,11 @@ func (s Set) Len() int           { return len(s) }
 func (s Set) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
 func (s Set) Less(i, j int) bool { return s[i] < s[j] }
 
+// NewSet returns a new Set
+func NewSet(n ...Int) Set {
+	return Set(n)
+}
+
 // Range returns a set of start .. end inclusive
 func Range(start, end Int) Set {
 	res := make(Set, end-start+1)
