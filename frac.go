@@ -30,7 +30,7 @@ func NewFrac(n, d Int) *Frac {
 
 // GCD returns the Greatest Common Denominator (aka Highest Common Factor) of the numerator and denominator of Frac f
 func (f *Frac) GCD() Int {
-	return Set{f.Num, f.Den}.GCD()
+	return NewSet(f.Num, f.Den).GCD()
 }
 
 func (f *Frac) String() string {

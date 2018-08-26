@@ -53,12 +53,10 @@ func BigSum(n []string) *big.Int {
 // BigProduct takes an array of strings representing numbers and
 // and returns a big Int containing their Product
 func BigProduct(n []string) *big.Int {
-	a := big.NewInt(0)
-	a.SetString(n[0], 10)
+	a, _ := new(big.Int).SetString(n[0], 10)
 
 	for i := 1; i < len(n); i++ {
-		b := big.NewInt(0)
-		b.SetString(n[i], 10)
+		b, _ := new(big.Int).SetString(n[i], 10)
 
 		a.Mul(a, b)
 	}

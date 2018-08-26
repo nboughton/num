@@ -158,7 +158,7 @@ func (s Set) Product() Int {
 	return t
 }
 
-// ToInt returns an Int by contacetenating its elements
+// ToInt returns an Int by concatenating its elements
 func (s Set) ToInt() Int {
 	var b []byte
 
