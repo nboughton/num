@@ -67,14 +67,14 @@ type Direction int
 
 // Vector Directions constants
 const (
-	LTR  Direction = iota // Left To Right
-	RTL                   // Right To Left
-	UP                    // Up
-	DOWN                  // Down
-	LTRU                  // Left To Right Up (diagonal)
-	LTRD                  // Left To Right Down (diagonal)
-	RTLU                  // Right To Left Up (diagonal)
-	RTLD                  // Right To Left Down (diagonal)
+	RIGHT  Direction = iota // Left To Right
+	LEFT                    // Right To Left
+	UP                      // Up
+	DOWN                    // Down
+	RIGHTU                  // Left To Right Up (diagonal)
+	RIGHTD                  // Left To Right Down (diagonal)
+	LEFTU                   // Right To Left Up (diagonal)
+	LEFTD                   // Right To Left Down (diagonal)
 )
 
 // Vector returns a ln length set of values starting at row/col extending in Direction d.
@@ -90,21 +90,21 @@ func (m Matrix) Vector(pos Coord, ln Int, d Direction, replaceWith ...Int) (Set,
 		crd := Coord{}
 
 		switch d {
-		case LTR:
+		case RIGHT:
 			crd = Coord{pos.Row, pos.Col + i}
-		case RTL:
+		case LEFT:
 			crd = Coord{pos.Row, pos.Col - i}
 		case DOWN:
 			crd = Coord{pos.Row + i, pos.Col}
 		case UP:
 			crd = Coord{pos.Row - i, pos.Col}
-		case LTRD:
+		case RIGHTD:
 			crd = Coord{pos.Row + i, pos.Col + i}
-		case RTLD:
+		case LEFTD:
 			crd = Coord{pos.Row + i, pos.Col - i}
-		case LTRU:
+		case RIGHTU:
 			crd = Coord{pos.Row - i, pos.Col + i}
-		case RTLU:
+		case LEFTU:
 			crd = Coord{pos.Row - i, pos.Col - i}
 		}
 
@@ -143,7 +143,7 @@ func Spiral(size Int) Matrix {
 		done := false
 
 		if inc%2 != 0 {
-			for _, d := range []Direction{LTR, DOWN} {
+			for _, d := range []Direction{RIGHT, DOWN} {
 				_, vec, err := m.Vector(Coord{r, c}, inc+1, d, Range(m[r][c], m[r][c]+inc)...)
 				if err != nil {
 					done = true
@@ -154,7 +154,7 @@ func Spiral(size Int) Matrix {
 			}
 
 		} else {
-			for _, d := range []Direction{RTL, UP} {
+			for _, d := range []Direction{LEFT, UP} {
 				_, vec, err := m.Vector(Coord{r, c}, inc+1, d, Range(m[r][c], m[r][c]+inc)...)
 				if err != nil {
 					done = true
