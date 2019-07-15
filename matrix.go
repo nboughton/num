@@ -123,21 +123,10 @@ func (m Matrix) Vector(pos Coord, ln Int, d Direction, replaceWith ...Int) (Set,
 	return res, crds, nil
 }
 
-/* Using Matrix as a grid
-Consider the following:
-Set{
-	Set{25,10,11,12,13},
-	Set{24,09,02,03,14},
-	Set{23,08,01,04,15},
-	Set{22,07,06,05,16},
-	Set{21,20,19,18,17}
-}
-*/
-
 // NumberSpiral creates a square grid number spiral of width size. If size is even it is incremented
-// to become odd. This function is unfinishied. Don't use it.
+// to become odd.
 func NumberSpiral(size Int) Matrix {
-	if size%2 != 0 {
+	if size%2 == 0 {
 		size++
 	}
 
@@ -153,39 +142,35 @@ func NumberSpiral(size Int) Matrix {
 	m[r][c] = 1
 	for inc := Int(1); inc <= size*size; inc++ {
 		if inc%2 != 0 {
-			v, rc, err := m.Vector(crd, inc+1, LTR, Range(m[crd.Row][crd.Col], m[crd.Row][crd.Col]+inc)...)
+			_, rc, err := m.Vector(crd, inc+1, LTR, Range(m[crd.Row][crd.Col], m[crd.Row][crd.Col]+inc)...)
 			if err != nil {
-				m.Vector(crd, inc, LTR)
+				m.Vector(crd, inc, LTR, Range(m[crd.Row][crd.Col], m[crd.Row][crd.Col]+inc)...)
 				break
 			}
 			crd.Row = rc[len(rc)-1].Row
 			crd.Col = rc[len(rc)-1].Col
-			fmt.Println(v, rc)
 
-			v, rc, err = m.Vector(crd, inc+1, DOWN, Range(m[crd.Row][crd.Col], m[crd.Row][crd.Col]+inc)...)
+			_, rc, err = m.Vector(crd, inc+1, DOWN, Range(m[crd.Row][crd.Col], m[crd.Row][crd.Col]+inc)...)
 			if err != nil {
 				break
 			}
 			crd.Row = rc[len(rc)-1].Row
 			crd.Col = rc[len(rc)-1].Col
-			fmt.Println(v, rc)
 
 		} else {
-			v, rc, err := m.Vector(crd, inc+1, RTL, Range(m[crd.Row][crd.Col], m[crd.Row][crd.Col]+inc)...)
+			_, rc, err := m.Vector(crd, inc+1, RTL, Range(m[crd.Row][crd.Col], m[crd.Row][crd.Col]+inc)...)
 			if err != nil {
 				break
 			}
 			crd.Row = rc[len(rc)-1].Row
 			crd.Col = rc[len(rc)-1].Col
-			fmt.Println(v, rc)
 
-			v, rc, err = m.Vector(crd, inc+1, UP, Range(m[crd.Row][crd.Col], m[crd.Row][crd.Col]+inc)...)
+			_, rc, err = m.Vector(crd, inc+1, UP, Range(m[crd.Row][crd.Col], m[crd.Row][crd.Col]+inc)...)
 			if err != nil {
 				break
 			}
 			crd.Row = rc[len(rc)-1].Row
 			crd.Col = rc[len(rc)-1].Col
-			fmt.Println(v, rc)
 		}
 
 	}
