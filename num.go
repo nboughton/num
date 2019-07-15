@@ -117,6 +117,22 @@ func (n Int) CfSqrt() Set {
 	return res
 }
 
+// ADP returns A(bundant), D(eficient) or P(erfect) depending on the value of n,
+// reutrns E if an error occurred (theoretically impossible)
+func (n Int) ADP() string {
+	d := n.Divisors()
+	s := d[:len(d)-1].Sum()
+	switch {
+	case s == n:
+		return "P"
+	case s < n:
+		return "D"
+	case s > n:
+		return "A"
+	}
+	return "E"
+}
+
 // Rotations returns a sequence of rotations of n.
 // I.e Rotations(123) = 123 -> 312 -> 231
 func (n Int) Rotations() chan Int {

@@ -7,6 +7,18 @@ import (
 // Matrix is a slice of slices of Int
 type Matrix []Set
 
+// NewMatrix creates an empty matrix of 0s with dimensions rowsXcolumns
+func NewMatrix(rows Int, cols Int) Matrix {
+	m := Matrix{}
+
+	for r := Int(0); r < rows; r++ {
+		m = append(m, make(Set, cols))
+	}
+
+	return m
+}
+
+// Implement the sort interface
 func (s Matrix) Len() int           { return len(s) }
 func (s Matrix) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
 func (s Matrix) Less(i, j int) bool { return len(s[i]) < len(s[j]) }
@@ -122,74 +134,38 @@ Set{
 }
 */
 
-// NewNumberSpiral creates a square grid number spiral of width size. If size is even it is incremented
+// NumberSpiral creates a square grid number spiral of width size. If size is even it is incremented
 // to become odd.
 /*
-CONSIDER:
-for i := 1; i < max; i += inc {
-	inc increases every 2nd and 4th turn
-	use vector, supply n = i..{i+inc}
-}
-*/
-/*
-func NewNumberSpiral(size Int) Matrix {
-	if size%2 == 0 {
+func NumberSpiral(size Int) Matrix {
+	if size%2 != 0 {
 		size++
 	}
 
-	grid := make(Matrix, size)
-	for row := range grid {
-		grid[row] = make(Set, size)
-	}
+	var (
+		// Lets declare our bits here in a nice orderly list
+		m = NewMatrix(size, size)
+	//			vecOrder = []Direction{UP, LTR, DOWN, RTL}
+		//	vecIdx   = 0
+		//	vecLen   = Int(1)
+		r = size / 2
+		c = size / 2
+	)
 
-	// Starting from the center head up 1...
-	crd, max := Coord{Row: size / 2, Col: size / 2}, size*size
-	i, inc := Int(1), Int(1)
-	for i <= max {
-		_, crds, err := grid.Vector(crd.Row, crd.Col, inc, UP, Range(i, i+inc)...)
-		if err != nil {
-			break
-		}
-		crd = crds[len(crds)-1]
-		i += inc
-
-		_, crds, err = grid.Vector(crd.Row, crd.Col, inc, LTR, Range(i, i+inc)...)
-		if err != nil {
-			break
-		}
-		crd = crds[len(crds)-1]
-		i += inc
-		inc++
-
-		_, crds, err = grid.Vector(crd.Row, crd.Col, inc, DOWN, Range(i, i+inc)...)
-		if err != nil {
-			break
-		}
-		crd = crds[len(crds)-1]
-		i += inc
-
-		_, crds, err = grid.Vector(crd.Row, crd.Col, inc, RTL, Range(i, i+inc)...)
-		if err != nil {
-			break
-		}
-		crd = crds[len(crds)-1]
-		i += inc
-		inc++
-	}
-
-	return grid
-}
-*/
-
-/*
-	switch {
-			case d == UP:
-				grid[row-1][col] = i
-			case d == LTR:
-				grid[row][col+1] = i
-			case d == DOWN:
-				grid[row+1][col] = i
-			case d == RTL:
-				grid[row][col-1] = i
+	// LET THE FUCKERY BEGIN
+	m[r][c] = 1
+	for i := Int(1); i <= size*size; i++ {
+		if i%2 != 0 {
+			v, _, err := m.Vector(Coord{r, c}, i+1, LTR)
+			if err != nil {
+				break
 			}
+		} else {
+
+		}
+
+	}
+
+	return m
+}
 */
