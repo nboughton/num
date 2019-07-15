@@ -123,56 +123,52 @@ func (m Matrix) Vector(pos Coord, ln Int, d Direction, replaceWith ...Int) (Set,
 	return res, crds, nil
 }
 
-// NumberSpiral creates a square grid number spiral of width size. If size is even it is incremented
+// Spiral creates a square grid number spiral of width size. If size is even it is incremented
 // to become odd.
-func NumberSpiral(size Int) Matrix {
+func Spiral(size Int) Matrix {
 	if size%2 == 0 {
 		size++
 	}
 
 	var (
 		// Lets declare our bits here in a nice orderly list
-		m   = NewMatrix(size, size)
-		r   = size / 2
-		c   = size / 2
-		crd = Coord{r, c}
+		m = NewMatrix(size, size)
+		r = size / 2
+		c = size / 2
 	)
 
 	// LET THE FUCKERY BEGIN
 	m[r][c] = 1
-	for inc := Int(1); inc <= size*size; inc++ {
-		if inc%2 != 0 {
-			_, rc, err := m.Vector(crd, inc+1, LTR, Range(m[crd.Row][crd.Col], m[crd.Row][crd.Col]+inc)...)
-			if err != nil {
-				m.Vector(crd, inc, LTR, Range(m[crd.Row][crd.Col], m[crd.Row][crd.Col]+inc)...)
-				break
-			}
-			crd.Row = rc[len(rc)-1].Row
-			crd.Col = rc[len(rc)-1].Col
+	for inc := Int(1); true; inc++ {
+		done := false
 
-			_, rc, err = m.Vector(crd, inc+1, DOWN, Range(m[crd.Row][crd.Col], m[crd.Row][crd.Col]+inc)...)
-			if err != nil {
-				break
+		if inc%2 != 0 {
+			for _, d := range []Direction{LTR, DOWN} {
+				_, vec, err := m.Vector(Coord{r, c}, inc+1, d, Range(m[r][c], m[r][c]+inc)...)
+				if err != nil {
+					done = true
+					break
+				}
+				last := len(vec) - 1
+				r, c = vec[last].Row, vec[last].Col
 			}
-			crd.Row = rc[len(rc)-1].Row
-			crd.Col = rc[len(rc)-1].Col
 
 		} else {
-			_, rc, err := m.Vector(crd, inc+1, RTL, Range(m[crd.Row][crd.Col], m[crd.Row][crd.Col]+inc)...)
-			if err != nil {
-				break
+			for _, d := range []Direction{RTL, UP} {
+				_, vec, err := m.Vector(Coord{r, c}, inc+1, d, Range(m[r][c], m[r][c]+inc)...)
+				if err != nil {
+					done = true
+					break
+				}
+				last := len(vec) - 1
+				r, c = vec[last].Row, vec[last].Col
 			}
-			crd.Row = rc[len(rc)-1].Row
-			crd.Col = rc[len(rc)-1].Col
 
-			_, rc, err = m.Vector(crd, inc+1, UP, Range(m[crd.Row][crd.Col], m[crd.Row][crd.Col]+inc)...)
-			if err != nil {
-				break
-			}
-			crd.Row = rc[len(rc)-1].Row
-			crd.Col = rc[len(rc)-1].Col
 		}
 
+		if done {
+			break
+		}
 	}
 
 	return m
